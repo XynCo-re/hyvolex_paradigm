@@ -1,0 +1,178 @@
+{
+  "name": "rust_eze",
+  "version": "1.1.0",
+  "description": "Quick reference guide and cheatsheet for Rust development with .cursorrules",
+  "quick_reference": {
+    "common_patterns": {
+      "error_handling": {
+        "basic": "Result<T, Error>",
+        "context": ".with_context(|| \"operation failed\")?",
+        "custom": "#[derive(Debug, thiserror::Error)]",
+        "conversion": "impl From<SourceError> for TargetError"
+      },
+      "async": {
+        "basic": "async fn name() -> Result<T>",
+        "spawn": "tokio::spawn(async move { })",
+        "timeout": "tokio::time::timeout(Duration::from_secs(5), future)"
+      },
+      "testing": {
+        "unit": "#[test]",
+        "async": "#[tokio::test]",
+        "doc": "```rust\n# Example\n```"
+      },
+      "telemetry": {
+        "span": "let _span = tracing::info_span!(\"span_name\", field1 = value1).entered();",
+        "event": "tracing::info!(${fields}, \"Event message\");",
+        "metrics": "metrics::counter!(\"metric_name\", 1);"
+      }
+    },
+    "platform_specific": {
+      "windows": {
+        "handles": "HANDLE, HWND, HMODULE",
+        "strings": "LPWSTR, LPCWSTR",
+        "errors": "GetLastError(), ERROR_SUCCESS"
+      },
+      "linux": {
+        "file_desc": "RawFd, FileDesc",
+        "errors": "errno, EAGAIN, EINTR",
+        "signals": "SIGTERM, SIGINT, SIGHUP"
+      }
+    },
+    "best_practices": {
+      "error_handling": [
+        "Use thiserror for library errors",
+        "Use anyhow for application errors",
+        "Always propagate context",
+        "Handle platform-specific errors",
+        "Avoid using unwrap and expect in production code",
+        "Implement comprehensive error logging"
+      ],
+      "async": [
+        "Prefer tokio::spawn over thread::spawn",
+        "Always handle cancellation",
+        "Use timeout for external calls",
+        "Implement graceful shutdown",
+        "Avoid blocking the async runtime",
+        "Use async-aware data structures"
+      ],
+      "testing": [
+        "Test happy and error paths",
+        "Mock external dependencies",
+        "Use test fixtures",
+        "Test platform-specific code",
+        "Employ property-based testing where applicable",
+        "Ensure high test coverage"
+      ],
+      "telemetry": [
+        "Instrument critical functions with spans",
+        "Log meaningful events",
+        "Capture relevant metrics",
+        "Ensure minimal performance overhead",
+        "Use appropriate log levels",
+        "Aggregate and monitor telemetry data"
+      ]
+    }
+  },
+  "common_dependencies": {
+    "error_handling": {
+      "thiserror": "2.0",
+      "anyhow": "1.0"
+    },
+    "async_runtime": {
+      "tokio": {
+        "version": "1.0",
+        "features": ["full"]
+      },
+      "futures": "0.3"
+    },
+    "testing": {
+      "mockall": "0.12",
+      "test-log": "0.2",
+      "proptest": "1.0",
+      "tokio-test": "0.4"
+    },
+    "telemetry": {
+      "tracing": "0.1",
+      "metrics": "0.17",
+      "tracing-subscriber": "0.3",
+      "tracing-futures": "0.2"
+    },
+    "static_analysis": {
+      "cargo-audit": "0.16",
+      "cargo-deny": "0.10"
+    }
+  },
+  "lints": {
+    "recommended": [
+      "clippy::all",
+      "clippy::pedantic",
+      "clippy::nursery",
+      "clippy::unwrap_used",
+      "clippy::expect_used",
+      "clippy::missing_docs",
+      "clippy::must_use_candidate"
+    ],
+    "project_specific": [
+      "missing_docs",
+      "unsafe_code",
+      "non_snake_case",
+      "unused_imports",
+      "unused_mut",
+      "clippy::redundant_clone"
+    ]
+  },
+  "documentation_templates": {
+    "crate_level": "//! ${crate_name}\n//!\n//! ${description}",
+    "module_level": "//! Module for ${purpose}\n//!\n//! # Examples\n//!\n//! ```rust\n//! ${example}\n//! ```",
+    "function_level": "/// ${description}\n///\n/// # Arguments\n///\n/// * `${param}` - ${param_desc}\n///\n/// # Returns\n///\n/// * `Result<${type}>` - ${returns}\n///\n/// # Errors\n///\n/// * `Error::${variant}` - ${error_desc}\n///\n/// # Example\n///\n/// ```rust\n/// ${example}\n/// ```",
+    "trait_level": "/// ${description}\n///\n/// # Methods\n///\n/// * `${method}` - ${method_desc}\n",
+    "enum_level": "/// ${description}\n///\n/// # Variants\n///\n/// * `${variant}` - ${variant_desc}\n"
+  },
+  "code_templates": {
+    "error_types": {
+      "basic": "pub type Result<T> = std::result::Result<T, Error>;",
+      "custom_error": "#[derive(Debug, thiserror::Error)]\npub enum Error {\n    #[error(\"${message}\")]\n    ${variant},\n}"
+    },
+    "async_patterns": {
+      "retry": "async fn with_retry<F, T, E>(f: F) -> Result<T>\nwhere\n    F: Fn() -> impl Future<Output = Result<T, E>>,\n    E: Into<Error>,\n{\n    let mut attempts = 0;\n    loop {\n        match f().await {\n            Ok(result) => return Ok(result),\n            Err(e) if attempts < MAX_RETRIES => {\n                attempts += 1;\n                continue;\n            }\n            Err(e) => return Err(e.into()),\n        }\n    }\n}",
+      "timeout": "async fn with_timeout<F, T>(f: F) -> Result<T>\nwhere\n    F: Future<Output = Result<T>>,\n{\n    tokio::time::timeout(Duration::from_secs(30), f)\n        .await\n        .map_err(|_| Error::Timeout)?\n}",
+      "spawn": "tokio::spawn(async move { ${body} })",
+      "select": "tokio::select! {\n    ${branches}\n}",
+      "stream_processor": "async fn process_stream<S>(mut stream: S) -> Result<(), Error>\nwhere\n    S: Stream<Item = Result<${item_type}, Error>> + Unpin,\n{\n    while let Some(item) = stream.next().await {\n        let item = item?;\n        ${processing}\n    }\n    Ok(())\n}",
+      "backoff": "backoff::future::retry(backoff::ExponentialBackoff::default(), || async {\n    ${operation}\n}).await?"
+    },
+    "telemetry": {
+      "span": "let _span = tracing::info_span!(\"${name}\", ${fields}).entered();",
+      "event": "tracing::info!(${fields}, \"${message}\");",
+      "metrics_counter": "metrics::counter!(\"${metric_name}\", ${value});",
+      "metrics_gauge": "metrics::gauge!(\"${metric_name}\", ${value});",
+      "metrics_histogram": "metrics::histogram!(\"${metric_name}\", ${value});",
+      "instrumented_fn": "#[tracing::instrument(level = \"${level}\", skip(${skip_params}))]\nfn ${name}(${params}) -> Result<${return_type}> {\n    ${body}\n}"
+    },
+    "error_handling": {
+      "basic_context": "${expr}.with_context(|| \"${context}\")?",
+      "map_err_custom": "${expr}.map_err(|e| Error::${variant}(e))?",
+      "ensure": "ensure!(${condition}, Error::${variant}(\"${message}\".into()))"
+    }
+  },
+  "platform_templates": {
+    "windows": {
+      "handle_wrapper": "pub struct HandleWrapper(HANDLE);\n\nimpl HandleWrapper {\n    pub fn new(handle: HANDLE) -> Self { Self(handle) }\n}\n\nimpl Drop for HandleWrapper {\n    fn drop(&mut self) {\n        unsafe { CloseHandle(self.0); }\n    }\n}",
+      "error_check": "if result == 0 {\n    return Err(Win32Error::from_last_error());\n}"
+    },
+    "linux": {
+      "fd_wrapper": "pub struct FdWrapper(RawFd);\n\nimpl FdWrapper {\n    pub fn new(fd: RawFd) -> Self { Self(fd) }\n}\n\nimpl Drop for FdWrapper {\n    fn drop(&mut self) {\n        unsafe { libc::close(self.0); }\n    }\n}",
+      "error_check": "if result < 0 {\n    return Err(std::io::Error::last_os_error());\n}"
+    }
+  },
+  "testing_templates": {
+    "unit_test": "#[test]\nfn test_${name}() -> Result<()> {\n    ${body}\n}",
+    "async_test": "#[tokio::test]\nasync fn test_${name}() -> Result<()> {\n    ${body}\n}",
+    "mock_struct": "#[cfg_attr(test, mockall::automock)]\npub trait ${name} {\n    fn ${method}(&self) -> Result<()>;\n}",
+    "mock_trait": "#[cfg_attr(test, mockall::automock)]\npub trait ${trait_name} {\n    fn ${method}(&self) -> Result<${return_type}>;\n}",
+    "integration_test": "#[cfg(test)]\nmod integration_tests {\n    use super::*;\n\n    #[tokio::test]\n    async fn test_${name}() -> Result<()> {\n        ${body}\n        Ok(())\n    }\n}",
+    "benchmark": "#[bench]\nfn bench_${name}(b: &mut Bencher) {\n    b.iter(|| {\n        ${body}\n    });\n}",
+    "proptest": "proptest! {\n    #[test]\n    fn test_${name}(${inputs}: ${types}) {\n        ${property_check}\n    }\n}",
+    "test_fixture": "fn setup_${name}() -> ${type} {\n    ${setup}\n}"
+  }
+}

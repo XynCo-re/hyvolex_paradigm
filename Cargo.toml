@@ -1,0 +1,59 @@
+[package]
+name = "hyvolex_paradigm"
+version = "0.1.0"
+edition = "2021"
+authors = ["Lord Xyn <LordXyn@proton.me>"]
+repository = "https://github.com/arcmoonstudios/hyvolex_paradigm"
+
+# Common dependencies for all platforms
+[dependencies]
+anyhow = { version = "1.0.94", features = ["backtrace"] }
+bevy = { version = "0.15.0", default-features = false, features = [
+    "animation",          # Animation support
+    "bevy_asset",         # Asset handling
+    "bevy_scene",         # Scene support
+    "bevy_winit",         # Window management
+    "bevy_core_pipeline", # Core rendering
+    "bevy_pbr",           # 3D rendering
+    "bevy_sprite",        # 2D rendering
+    "bevy_ui",            # User interface
+    "bevy_text",          # Text rendering
+    "bevy_render",        # Rendering system
+    "bevy_gizmos",        # Debug visualization
+    "bevy_picking",       # Mesh picking support
+    "png",                # PNG image format support
+    "hdr",                # HDR image format support
+    "ktx2",               # KTX2 texture format support
+    "default_font",       # Default font for text
+] }
+bevy-inspector-egui = "0.28.0"
+bevy_mod_outline = "0.9.0"
+bevy_panorbit_camera = "0.21.1"
+bevy_tweening = "0.12.0"
+bevy_picking = "0.15" # Add explicit picking dependency
+cfg-if = "1.0.0"
+leafwing-input-manager = "0.13.2"
+parking_lot = "0.12"
+rand = "0.8"
+thiserror = "2.0.7"
+clap = "4.5.23"
+miette = "7.4.0"
+quote = "1.0.37"
+proc-macro2 = "1.0.92"
+
+[dependencies.bevy_hanabi]
+version = "0.14.0"
+features = ["2d", "3d"]
+
+# Development profile
+[profile.dev]
+opt-level = 1
+
+# Optimize all dependencies even in debug builds
+[profile.dev.package."*"]
+opt-level = 3
+
+# Release profile
+[profile.release]
+opt-level = 3
+lto = "thin"

@@ -1,1 +1,13 @@
- 
+/target/
+**/*.rs.bk
+Cargo.lock
+.env
+.env.*
+.idea/
+.vscode/
+*.pdb
+debug/
+target/
+**/*.rs.bk
+*.pdb
+.DS_Store 

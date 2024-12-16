@@ -1,0 +1,900 @@
+{
+  "name": ".cursorrules",
+  "info": {
+    "title": "Cursor AI Assistant Pro",
+    "description": "Advanced Rust development assistant with intelligent code generation, real-time analysis, and deep API integration",
+    "version": "v1.4.0"
+  },
+  "reference_config": {
+    "directory": {
+      "path": ".rustRules",
+      "description": "Directory containing Rust configuration and reference files",
+      "source": "X:\\.Projects\\.rustRules",
+      "priority": "high",
+      "files": [
+        {
+          "path": ".cursorrules",
+          "description": "Main Cursor configuration file",
+          "required": true
+        },
+        {
+          "path": "rust_eze.json",
+          "description": "Rust development reference and cheatsheet",
+          "required": true
+        }
+      ],
+      "on_missing": {
+        "action": "copy_directory",
+        "source": "X:\\.Projects\\.rustRules",
+        "fallback": {
+          "action": "continue",
+          "silent": true,
+          "use_defaults": true
+        },
+        "validate_copy": true,
+        "notify_on_copy": true,
+        "create_if_missing": true
+      }
+    },
+    "integration": {
+      "check_before_correction": true,
+      "merge_suggestions": true,
+      "prefer_stricter_rules": true,
+      "fallback_behavior": "continue_silently"
+    }
+  },
+  "validation_requirements": {
+    "cargo_toml": {
+      "mandatory": true,
+      "triggers": [
+        "file_creation",
+        "file_modification",
+        "dependency_change",
+        "feature_change"
+      ],
+      "checks": {
+        "dependencies": {
+          "version_check": {
+            "source": "crates.io",
+            "verify_compatibility": true,
+            "check_breaking_changes": true
+          },
+          "features": {
+            "validate_combinations": true,
+            "check_conflicts": true
+          },
+          "minimum_requirements": {
+            "check_msrv": true,
+            "verify_build_targets": true
+          }
+        },
+        "workspace": {
+          "validate_members": true,
+          "check_inheritance": true
+        }
+      },
+      "update_strategy": {
+        "auto_update_compatible": true,
+        "preserve_semver_constraints": true,
+        "maintain_lockfile": true
+      }
+    },
+    "code_validation": {
+      "pre_generation": {
+        "docs_verification": {
+          "sources": [
+            {
+              "name": "docs.rs",
+              "priority": "highest",
+              "required": true
+            },
+            {
+              "name": "crates.io",
+              "priority": "high",
+              "required": true
+            },
+            {
+              "name": "lib.rs",
+              "priority": "medium",
+              "required": false
+            }
+          ],
+          "checks": [
+            "api_compatibility",
+            "breaking_changes",
+            "deprecation_notices",
+            "feature_requirements"
+          ]
+        },
+        "static_analysis": {
+          "required": true,
+          "tools": [
+            "clippy",
+            "rustfmt",
+            "rustc",
+            "cargo-audit",
+            "cargo-deny"
+          ]
+        }
+      },
+      "post_generation": {
+        "verification": {
+          "compile_check": true,
+          "test_compilation": true,
+          "lint_validation": true
+        },
+        "documentation": {
+          "verify_examples": true,
+          "check_doc_tests": true
+        }
+      }
+    }
+  },
+  "debugging_priority": {
+    "approach": "documentation_first",
+    "steps": [
+      {
+        "name": "dependency_validation",
+        "priority": 0,
+        "required": true,
+        "actions": [
+          "Validate all dependencies in Cargo.toml",
+          "Check for breaking changes in dependencies",
+          "Verify feature flag compatibility",
+          "Ensure MSRV compatibility"
+        ]
+      },
+      {
+        "name": "official_docs",
+        "priority": 1,
+        "required": true,
+        "actions": [
+          "Check official crate documentation",
+          "Review breaking changes in release notes",
+          "Verify API compatibility",
+          "Study idiomatic usage patterns",
+          "Validate against docs.rs examples"
+        ]
+      },
+      {
+        "name": "code_analysis",
+        "priority": 2,
+        "actions": [
+          "Read actual file content",
+          "Verify imports and dependencies",
+          "Check module patterns",
+          "Review type definitions",
+          "Analyze trait implementations"
+        ]
+      },
+      {
+        "name": "targeted_fixes",
+        "priority": 3,
+        "actions": [
+          "Apply fixes based on official docs",
+          "Update module patterns",
+          "Fix type conversions",
+          "Implement missing traits",
+          "Add proper error handling"
+        ]
+      }
+    ],
+    "module_initialization": {
+      "steps": [
+        {
+          "name": "documentation_research",
+          "priority": 1,
+          "actions": [
+            "Search official crate docs for similar modules",
+            "Review Rust API guidelines",
+            "Check community best practices",
+            "Study existing implementations",
+            "Review platform-specific documentation"
+          ]
+        },
+        {
+          "name": "platform_analysis",
+          "priority": 1,
+          "actions": [
+            "Determine target platforms",
+            "Check platform-specific APIs",
+            "Review platform constraints",
+            "Plan cross-platform abstractions"
+          ]
+        },
+        {
+          "name": "structure_planning",
+          "priority": 2,
+          "actions": [
+            "Define module boundaries",
+            "Plan public interface",
+            "Design error types",
+            "Outline type hierarchy",
+            "Plan platform-specific implementations"
+          ]
+        },
+        {
+          "name": "implementation",
+          "priority": 3,
+          "actions": [
+            "Create module structure",
+            "Implement core types",
+            "Add documentation",
+            "Write unit tests",
+            "Implement platform-specific modules"
+          ]
+        }
+      ],
+      "common_patterns": {
+        "module_header": "//! ${module_name}\n//!\n//! ${description}\n//!\n//! # Platform Support\n//!\n//! This module supports the following platforms:\n//! - Windows: ${windows_support}\n//! - Linux: ${linux_support}\n//!\n//! # Examples\n//!\n//! ```rust\n//! ${example}\n//! ```",
+        "error_type": "#[derive(Debug, thiserror::Error)]\npub enum ${module_name}Error {\n    #[error(transparent)]\n    Io(#[from] std::io::Error),\n    #[cfg(target_os = \"windows\")]\n    #[error(transparent)]\n    Win32(#[from] Win32Error),\n    #[cfg(target_os = \"linux\")]\n    #[error(transparent)]\n    Linux(#[from] LinuxError),\n    #[error(\"{0}\")]\n    Custom(String),\n}",
+        "public_interface": "pub mod ${module_name} {\n    use super::*;\n\n    mod common;\n    #[cfg(target_os = \"windows\")]\n    mod windows;\n    #[cfg(target_os = \"linux\")]\n    mod linux;\n    mod error;\n\n    pub use self::common::*;\n    #[cfg(target_os = \"windows\")]\n    pub use self::windows::*;\n    #[cfg(target_os = \"linux\")]\n    pub use self::linux::*;\n    pub use self::error::*;\n}",
+        "test_module": "#[cfg(test)]\nmod tests {\n    use super::*;\n\n    #[test]\n    fn test_common_${name}() {\n        ${common_tests}\n    }\n\n    #[cfg(target_os = \"windows\")]\n    mod windows_tests {\n        use super::*;\n\n        #[test]\n        fn test_windows_${name}() {\n            ${windows_tests}\n        }\n    }\n\n    #[cfg(target_os = \"linux\")]\n    mod linux_tests {\n        use super::*;\n\n        #[test]\n        fn test_linux_${name}() {\n            ${linux_tests}\n        }\n    }\n}"
+      }
+    },
+    "rules": {
+      "diagnostics": {
+        "enable": true,
+        "experimental": {
+          "enable": true
+        },
+        "disabled": [
+          "inactive-code",
+          "unresolved-module"
+        ],
+        "warningsAsHint": [
+          "unused_variables",
+          "dead_code",
+          "unused_imports"
+        ],
+        "warningsAsInfo": [
+          "non_snake_case",
+          "missing_docs"
+        ],
+        "remapPrefix": {}
+      },
+      "assists": {
+        "expressionFillDefault": "unimplemented!()",
+        "termSearch": {
+          "borrowcheck": true,
+          "fuel": 2400
+        },
+        "emitMustUse": true
+      },
+      "checkOnSave": {
+        "enable": true,
+        "command": "clippy",
+        "allTargets": true,
+        "extraArgs": [
+          "--all-features",
+          "--message-format=json",
+          "--warn=clippy::all",
+          "--warn=clippy::pedantic",
+          "--warn=clippy::nursery",
+          "--warn=clippy::unwrap_used",
+          "--warn=clippy::expect_used"
+        ],
+        "invocationStrategy": "per_workspace",
+        "noDefaultFeatures": false,
+        "workspace": true,
+        "ignore": [
+          "generated/",
+          "target/",
+          "**/tests/",
+          "**/benches/"
+        ]
+      },
+      "completion": {
+        "autoimport": {
+          "enable": true
+        },
+        "autoself": {
+          "enable": true
+        },
+        "fullFunctionSignatures": {
+          "enable": true
+        },
+        "postfix": {
+          "enable": true
+        },
+        "privateEditable": {
+          "enable": true
+        },
+        "termSearch": {
+          "enable": true,
+          "fuel": 2000
+        },
+        "callable": {
+          "snippets": "fill_arguments"
+        },
+        "addSemicolonToUnit": true,
+        "hideDeprecated": true,
+        "limit": 100,
+        "snippets": {
+          "custom": {
+            "Ok": {
+              "postfix": "ok",
+              "body": "Ok(${receiver})",
+              "description": "Wrap expression in Result::Ok",
+              "scope": "expr"
+            },
+            "Box::pin": {
+              "postfix": "pinbox",
+              "body": "Box::pin(${receiver})",
+              "requires": "std::boxed::Box",
+              "description": "Put expression into a pinned Box",
+              "scope": "expr"
+            },
+            "Arc::new": {
+              "postfix": "arc",
+              "body": "Arc::new(${receiver})",
+              "requires": "std::sync::Arc",
+              "description": "Put expression into an Arc",
+              "scope": "expr"
+            },
+            "Some": {
+              "postfix": "some",
+              "body": "Some(${receiver})",
+              "description": "Wrap expression in Option::Some",
+              "scope": "expr"
+            },
+            "Err": {
+              "postfix": "err",
+              "body": "Err(${receiver})",
+              "description": "Wrap expression in Result::Err",
+              "scope": "expr"
+            },
+            "anyhow": {
+              "postfix": "anyerr",
+              "body": "anyhow::anyhow!(${receiver})",
+              "requires": "anyhow",
+              "description": "Create an anyhow error",
+              "scope": "expr"
+            },
+            "trace": {
+              "postfix": "trace",
+              "body": "tracing::trace!(${receiver})",
+              "requires": "tracing",
+              "description": "Log at TRACE level",
+              "scope": "expr"
+            },
+            "debug": {
+              "postfix": "debug",
+              "body": "tracing::debug!(${receiver})",
+              "requires": "tracing",
+              "description": "Log at DEBUG level",
+              "scope": "expr"
+            },
+            "info": {
+              "postfix": "info",
+              "body": "tracing::info!(${receiver})",
+              "requires": "tracing",
+              "description": "Log at INFO level",
+              "scope": "expr"
+            },
+            "warn": {
+              "postfix": "warn",
+              "body": "tracing::warn!(${receiver})",
+              "requires": "tracing",
+              "description": "Log at WARN level",
+              "scope": "expr"
+            },
+            "error": {
+              "postfix": "error",
+              "body": "tracing::error!(${receiver})",
+              "requires": "tracing",
+              "description": "Log at ERROR level",
+              "scope": "expr"
+            }
+          }
+        }
+      },
+      "inlayHints": {
+        "bindingModeHints": {
+          "enable": true
+        },
+        "chainingHints": {
+          "enable": true
+        },
+        "closingBraceHints": {
+          "enable": true,
+          "minLines": 20
+        },
+        "closureReturnTypeHints": {
+          "enable": "always"
+        },
+        "parameterHints": {
+          "enable": true
+        },
+        "typeHints": {
+          "enable": true,
+          "hideClosureInitialization": false,
+          "hideNamedConstructor": false
+        },
+        "maxLength": 50,
+        "renderColons": true,
+        "expressionAdjustmentHints": {
+          "enable": "always",
+          "hideOutsideUnsafe": true,
+          "mode": "prefix"
+        },
+        "lifetimeElisionHints": {
+          "enable": "always",
+          "useParameterNames": true
+        },
+        "reborrowHints": {
+          "enable": "always"
+        },
+        "closureCaptureHints": {
+          "enable": true
+        },
+        "discriminantHints": {
+          "enable": "always"
+        },
+        "implicitDrops": {
+          "enable": true
+        },
+        "rangeExclusiveHints": {
+          "enable": true
+        }
+      }
+    },
+    "modules": {
+      "telemetry": {
+        "enable": true,
+        "config": {
+          "metrics_endpoint": "https://metrics.cursor.ai/",
+          "tracing_level": "info",
+          "log_format": "json",
+          "log_rotation": {
+            "enabled": true,
+            "max_size_mb": 100,
+            "max_files": 10
+          }
+        }
+      },
+      "user_customization": {
+        "preferences": {
+          "inlay_hints": {
+            "verbosity": "balanced",
+            "color_scheme": "default"
+          },
+          "snippets": {
+            "trigger_on_typing": true,
+            "auto_trigger_delay_ms": 300
+          },
+          "error_handling": {
+            "strategy": "contextual",
+            "logging_level": "error"
+          }
+        }
+      },
+      "performance_monitoring": {
+        "telemetry_enabled": true,
+        "metrics_collected": [
+          "suggestion_accuracy",
+          "response_time",
+          "resource_usage"
+        ],
+        "alerting": {
+          "thresholds": {
+            "response_time_ms": 5000,
+            "memory_usage_mb": 1024
+          },
+          "notification_channels": [
+            "email",
+            "slack"
+          ]
+        }
+      },
+      "continuous_validation": {
+        "automated_tests_integration": true,
+        "static_analysis_tools": [
+          "cargo-audit",
+          "cargo-deny"
+        ],
+        "validation_steps": [
+          "run_unit_tests",
+          "run_integration_tests",
+          "perform_static_analysis"
+        ]
+      },
+      "error_handling_initialization": {
+        "directory_check": {
+          "paths": [
+            "src/err",
+            "src/error"
+          ],
+          "on_missing": {
+            "action": "create",
+            "structure": {
+              "directory": "src/err",
+              "files": [
+                {
+                  "name": "mod.rs",
+                  "template": "//! Error types for the ${crate_name} crate\n//!\n//! This module provides a centralized error handling system using thiserror for error definitions\n//! and anyhow for error context and propagation.\n\nuse std::fmt;\nuse thiserror::Error;\nuse std::error::Error as StdError;\n\npub type Result<T> = std::result::Result<T, Error>;\n\n#[derive(Error, Debug)]\n#[non_exhaustive]\npub enum Error {\n    #[error(transparent)]\n    Internal(#[from] InternalError),\n\n    #[error(\"IO error: {0}\")]\n    Io(#[from] std::io::Error),\n\n    #[error(\"Configuration error: {0}\")]\n    Config(String),\n\n    #[error(transparent)]\n    Other(#[from] anyhow::Error),\n\n    #[error(\"{0}\")]\n    Custom(String),\n\n    #[error(\"Multiple errors occurred: {0:?}\")]\n    Multiple(Vec<Error>),\n\n    #[error(\"Circuit breaker '{0}' is open\")]\n    CircuitOpen(String),\n}\n\n#[derive(Error, Debug)]\n#[non_exhaustive]\npub enum InternalError {\n    #[error(\"Invalid state: {message}\")]\n    InvalidState {\n        message: String,\n        #[source]\n        source: Option<Box<dyn StdError + Send + Sync>>,\n    },\n\n    #[error(\"Validation failed: {message}\")]\n    ValidationFailed {\n        message: String,\n        #[source]\n        source: Option<Box<dyn StdError + Send + Sync>>,\n    },\n\n    #[error(\"Operation failed: {message}\")]\n    OperationFailed {\n        message: String,\n        #[source]\n        source: Option<Box<dyn StdError + Send + Sync>>,\n    },\n}\n\n// Helper methods for error creation and context\npub trait ErrorExt<T> {\n    fn context<C>(self, context: C) -> Result<T>\n    where\n        C: fmt::Display + Send + Sync + 'static;\n\n    fn with_context<C, F>(self, f: F) -> Result<T>\n    where\n        C: fmt::Display + Send + Sync + 'static,\n        F: FnOnce() -> C;\n}\n\nimpl<T, E> ErrorExt<T> for std::result::Result<T, E>\nwhere\n    E: StdError + Send + Sync + 'static,\n{\n    fn context<C>(self, context: C) -> Result<T>\n    where\n        C: fmt::Display + Send + Sync + 'static,\n    {\n        self.map_err(|e| Error::Other(anyhow::Error::new(e).context(context)))\n    }\n\n    fn with_context<C, F>(self, f: F) -> Result<T>\n    where\n        C: fmt::Display + Send + Sync + 'static,\n        F: FnOnce() -> C,\n    {\n        self.map_err(|e| Error::Other(anyhow::Error::new(e).context(f())))\n    }\n}\n\n// Convenience methods for Error creation\nimpl Error {\n    pub fn custom<S: Into<String>>(msg: S) -> Self {\n        Error::Custom(msg.into())\n    }\n\n    pub fn invalid_state<S: Into<String>>(msg: S) -> Self {\n        Error::Internal(InternalError::InvalidState {\n            message: msg.into(),\n            source: None,\n        })\n    }\n\n    pub fn validation_failed<S: Into<String>>(msg: S) -> Self {\n        Error::Internal(InternalError::ValidationFailed {\n            message: msg.into(),\n            source: None,\n        })\n    }\n\n    pub fn operation_failed<S: Into<String>>(msg: S) -> Self {\n        Error::Internal(InternalError::OperationFailed {\n            message: msg.into(),\n            source: None,\n        })\n    }\n}"
+                },
+                {
+                  "name": "conversion.rs",
+                  "template": "//! Error conversion implementations for external error types\n\nuse super::Error;\n\n// Add common error type conversions here\n// Example:\n// impl From<redis::RedisError> for Error {\n//     fn from(err: redis::RedisError) -> Self {\n//         Error::Other(err.into())\n//     }\n// }"
+                },
+                {
+                  "name": "macros.rs",
+                  "template": "//! Error handling macros\n\n#[macro_export]\nmacro_rules! ensure {\n    ($cond:expr, $err:expr) => {\n        if !($cond) {\n            return Err($err);\n        }\n    };\n    ($cond:expr, $fmt:expr, $($arg:tt)*) => {\n        if !($cond) {\n            return Err(Error::Custom(format!($fmt, $($arg)*)));\n        }\n    };\n}\n\n#[macro_export]\nmacro_rules! bail {\n    ($err:expr) => {\n        return Err($err);\n    };\n    ($fmt:expr, $($arg:tt)*) => {\n        return Err(Error::Custom(format!($fmt, $($arg)*)));\n    };\n}\n\n#[macro_export]\nmacro_rules! with_context {\n    ($expr:expr, $context:expr) => {\n        match $expr {\n            Ok(val) => Ok(val),\n            Err(err) => Err(Error::Other(anyhow::Error::new(err).context($context))),\n        }\n    };\n    ($expr:expr, $fmt:expr, $($arg:tt)*) => {\n        match $expr {\n            Ok(val) => Ok(val),\n            Err(err) => Err(Error::Other(anyhow::Error::new(err).context(format!($fmt, $($arg)*)))),\n        }\n    };\n}"
+                },
+                {
+                  "name": "circuit_breaker.rs",
+                  "template": "//! Circuit breaker pattern implementation for error handling\n//!\n//! This module provides a generic circuit breaker that can be used to\n//! prevent cascading failures in distributed systems.\n\nuse std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};\nuse std::sync::Arc;\nuse std::time::{Duration, Instant};\nuse parking_lot::RwLock;\nuse super::{Error, Result};\n\n#[derive(Debug, Clone, Copy, PartialEq, Eq)]\npub enum CircuitState {\n    Closed,\n    HalfOpen,\n    Open,\n}\n\n#[derive(Debug)]\npub struct CircuitBreaker {\n    name: String,\n    state: RwLock<CircuitState>,\n    failure_count: AtomicUsize,\n    last_failure: AtomicU64,\n    failure_threshold: usize,\n    reset_timeout: Duration,\n}\n\nimpl CircuitBreaker {\n    pub fn new(\n        name: impl Into<String>,\n        failure_threshold: usize,\n        reset_timeout: Duration,\n    ) -> Arc<Self> {\n        Arc::new(Self {\n            name: name.into(),\n            state: RwLock::new(CircuitState::Closed),\n            failure_count: AtomicUsize::new(0),\n            last_failure: AtomicU64::new(0),\n            failure_threshold,\n            reset_timeout,\n        })\n    }\n\n    pub fn name(&self) -> &str {\n        &self.name\n    }\n\n    pub fn state(&self) -> CircuitState {\n        *self.state.read()\n    }\n\n    pub fn record_success(&self) {\n        if self.state() == CircuitState::HalfOpen {\n            *self.state.write() = CircuitState::Closed;\n        }\n        self.failure_count.store(0, Ordering::SeqCst);\n    }\n\n    pub fn record_failure(&self) {\n        let failures = self.failure_count.fetch_add(1, Ordering::SeqCst) + 1;\n        self.last_failure.store(Instant::now().elapsed().as_secs(), Ordering::SeqCst);\n\n        if failures >= self.failure_threshold {\n            *self.state.write() = CircuitState::Open;\n        }\n    }\n\n    pub fn may_execute(&self) -> bool {\n        match self.state() {\n            CircuitState::Closed => true,\n            CircuitState::Open => {\n                let last_failure = Duration::from_secs(self.last_failure.load(Ordering::SeqCst));\n                if last_failure >= self.reset_timeout {\n                    *self.state.write() = CircuitState::HalfOpen;\n                    true\n                } else {\n                    false\n                }\n            }\n            CircuitState::HalfOpen => true,\n        }\n    }\n\n    pub async fn execute<F, T>(&self, f: F) -> Result<T>\n    where\n        F: std::future::Future<Output = Result<T>>,\n    {\n        if !self.may_execute() {\n            return Err(Error::CircuitOpen(self.name.clone()));\n        }\n\n        match f.await {\n            Ok(result) => {\n                self.record_success();\n                Ok(result)\n            }\n            Err(e) => {\n                self.record_failure();\n                Err(e)\n            }\n        }\n    }\n}\n\n#[cfg(test)]\nmod tests {\n    use super::*;\n    use tokio::time::sleep;\n\n    #[tokio::test]\n    async fn test_circuit_breaker() -> Result<()> {\n        let cb = CircuitBreaker::new(\"test\", 3, Duration::from_secs(1));\n\n        // Test successful execution\n        let result = cb.execute(async { Ok::<_, Error>(42) }).await;\n        assert!(result.is_ok());\n        assert_eq!(cb.state(), CircuitState::Closed);\n\n        // Test failure threshold\n        for _ in 0..3 {\n            let _ = cb.execute(async { Err::<i32, _>(Error::custom(\"test error\")) }).await;\n        }\n        assert_eq!(cb.state(), CircuitState::Open);\n\n        // Test reset timeout\n        sleep(Duration::from_secs(1)).await;\n        let result = cb.execute(async { Ok::<_, Error>(42) }).await;\n        assert!(result.is_ok());\n        assert_eq!(cb.state(), CircuitState::Closed);\n\n        Ok(())\n    }\n}"
+                },
+                {
+                  "name": "dummy.rs",
+                  "template": "//! Dummy implementations for testing error scenarios\n//!\n//! This module provides dummy implementations that can be used\n//! to test error handling code paths.\n\nuse std::future::Future;\nuse super::{Error, Result};\n\n/// A dummy operation that always succeeds\npub async fn always_succeeds<T>(value: T) -> Result<T> {\n    Ok(value)\n}\n\n/// A dummy operation that always fails with a custom error\npub async fn always_fails<T>(message: impl Into<String>) -> Result<T> {\n    Err(Error::custom(message))\n}\n\n/// A dummy operation that fails after N successes\npub struct FailAfterN<T> {\n    value: T,\n    remaining: usize,\n    error_message: String,\n}\n\nimpl<T: Clone> FailAfterN<T> {\n    pub fn new(value: T, n: usize, error_message: impl Into<String>) -> Self {\n        Self {\n            value,\n            remaining: n,\n            error_message: error_message.into(),\n        }\n    }\n\n    pub async fn execute(&mut self) -> Result<T> {\n        if self.remaining > 0 {\n            self.remaining -= 1;\n            Ok(self.value.clone())\n        } else {\n            Err(Error::custom(&self.error_message))\n        }\n    }\n}\n\n/// A dummy operation that randomly fails\npub struct RandomFailure<T> {\n    value: T,\n    failure_probability: f64,\n    error_message: String,\n}\n\nimpl<T: Clone> RandomFailure<T> {\n    pub fn new(value: T, failure_probability: f64, error_message: impl Into<String>) -> Self {\n        assert!((0.0..=1.0).contains(&failure_probability));\n        Self {\n            value,\n            failure_probability,\n            error_message: error_message.into(),\n        }\n    }\n\n    pub async fn execute(&self) -> Result<T> {\n        if rand::random::<f64>() < self.failure_probability {\n            Err(Error::custom(&self.error_message))\n        } else {\n            Ok(self.value.clone())\n        }\n    }\n}\n\n#[cfg(test)]\nmod tests {\n    use super::*;\n\n    #[tokio::test]\n    async fn test_dummy_operations() -> Result<()> {\n        // Test always_succeeds\n        let result = always_succeeds(42).await?;\n        assert_eq!(result, 42);\n\n        // Test always_fails\n        let result = always_fails::<i32>(\"test error\").await;\n        assert!(result.is_err());\n\n        // Test FailAfterN\n        let mut fail_after = FailAfterN::new(42, 2, \"failed after 2\");\n        assert!(fail_after.execute().await.is_ok());\n        assert!(fail_after.execute().await.is_ok());\n        assert!(fail_after.execute().await.is_err());\n\n        // Test RandomFailure\n        let random_fail = RandomFailure::new(42, 0.0, \"random failure\");\n        assert!(random_fail.execute().await.is_ok());\n\n        Ok(())\n    }\n}"
+                },
+                {
+                  "name": "fallback.rs",
+                  "template": "//! Fallback error handling implementations for different platforms and configurations\n//!\n//! This module provides platform-specific error handling with fallbacks using cfg_if.\n\nuse super::{Error, Result};\nuse std::sync::Arc;\n\n/// Platform-specific error recovery strategies\npub trait ErrorRecovery: Send + Sync + 'static {\n    fn handle_error(&self, error: &Error) -> Result<()>;\n    fn can_recover(&self, error: &Error) -> bool;\n}\n\ncfg_if::cfg_if! {\n    if #[cfg(target_os = \"windows\")] {\n        mod windows {\n            use super::*;\n            use std::io;\n            use windows_sys::Win32::Foundation::ERROR_SHARING_VIOLATION;\n\n            #[derive(Debug, Default)]\n            pub struct WindowsErrorRecovery;\n\n            impl ErrorRecovery for WindowsErrorRecovery {\n                fn handle_error(&self, error: &Error) -> Result<()> {\n                    if let Error::Io(io_err) = error {\n                        if let Some(code) = io_err.raw_os_error() {\n                            if code == ERROR_SHARING_VIOLATION as i32 {\n                                // Implement Windows-specific sharing violation recovery\n                                return Ok(());\n                            }\n                        }\n                    }\n                    Err(error.clone())\n                }\n\n                fn can_recover(&self, error: &Error) -> bool {\n                    matches!(error, Error::Io(_))\n                }\n            }\n        }\n        pub use windows::WindowsErrorRecovery as PlatformErrorRecovery;\n    } else if #[cfg(target_os = \"linux\")] {\n        mod linux {\n            use super::*;\n            use std::io;\n            use nix::errno::Errno;\n\n            #[derive(Debug, Default)]\n            pub struct LinuxErrorRecovery;\n\n            impl ErrorRecovery for LinuxErrorRecovery {\n                fn handle_error(&self, error: &Error) -> Result<()> {\n                    if let Error::Io(io_err) = error {\n                        if let Some(code) = io_err.raw_os_error() {\n                            if code == Errno::EAGAIN as i32 {\n                                // Implement Linux-specific EAGAIN recovery\n                                return Ok(());\n                            }\n                        }\n                    }\n                    Err(error.clone())\n                }\n\n                fn can_recover(&self, error: &Error) -> bool {\n                    matches!(error, Error::Io(_))\n                }\n            }\n        }\n        pub use linux::LinuxErrorRecovery as PlatformErrorRecovery;\n    } else {\n        mod generic {\n            use super::*;\n\n            #[derive(Debug, Default)]\n            pub struct GenericErrorRecovery;\n\n            impl ErrorRecovery for GenericErrorRecovery {\n                fn handle_error(&self, error: &Error) -> Result<()> {\n                    // Generic fallback error recovery strategy\n                    if let Error::Io(_) = error {\n                        // Basic IO error recovery attempt\n                        return Ok(());\n                    }\n                    Err(error.clone())\n                }\n\n                fn can_recover(&self, error: &Error) -> bool {\n                    matches!(error, Error::Io(_))\n                }\n            }\n        }\n        pub use generic::GenericErrorRecovery as PlatformErrorRecovery;\n    }\n}\n\n/// Error recovery manager that attempts to recover from errors using platform-specific strategies\n#[derive(Debug)]\npub struct ErrorRecoveryManager {\n    strategies: Vec<Arc<dyn ErrorRecovery>>,\n}\n\nimpl Default for ErrorRecoveryManager {\n    fn default() -> Self {\n        let mut manager = Self::new();\n        manager.add_strategy(Arc::new(PlatformErrorRecovery::default()));\n        manager\n    }\n}\n\nimpl ErrorRecoveryManager {\n    pub fn new() -> Self {\n        Self {\n            strategies: Vec::new(),\n        }\n    }\n\n    pub fn add_strategy(&mut self, strategy: Arc<dyn ErrorRecovery>) {\n        self.strategies.push(strategy);\n    }\n\n    pub fn try_recover(&self, error: &Error) -> Result<()> {\n        for strategy in &self.strategies {\n            if strategy.can_recover(error) {\n                if let Ok(()) = strategy.handle_error(error) {\n                    return Ok(());\n                }\n            }\n        }\n        Err(error.clone())\n    }\n\n    pub async fn try_recover_async<F, T>(&self, f: F) -> Result<T>\n    where\n        F: std::future::Future<Output = Result<T>> + Clone,\n    {\n        let mut last_error = None;\n\n        for strategy in &self.strategies {\n            match f.clone().await {\n                Ok(result) => return Ok(result),\n                Err(error) if strategy.can_recover(&error) => {\n                    if strategy.handle_error(&error).is_ok() {\n                        match f.clone().await {\n                            Ok(result) => return Ok(result),\n                            Err(e) => last_error = Some(e),\n                        }\n                    } else {\n                        last_error = Some(error);\n                    }\n                }\n                Err(error) => last_error = Some(error),\n            }\n        }\n\n        Err(last_error.unwrap_or_else(|| Error::custom(\"Recovery failed\")))\n    }\n}\n\n#[cfg(test)]\nmod tests {\n    use super::*;\n    use std::io;\n\n    #[test]\n    fn test_platform_error_recovery() -> Result<()> {\n        let recovery = PlatformErrorRecovery::default();\n        let io_error = Error::Io(io::Error::new(io::ErrorKind::Other, \"test error\"));\n\n        assert!(recovery.can_recover(&io_error));\n        assert!(recovery.handle_error(&io_error).is_ok());\n\n        Ok(())\n    }\n\n    #[tokio::test]\n    async fn test_error_recovery_manager() -> Result<()> {\n        let manager = ErrorRecoveryManager::default();\n\n        // Test successful recovery\n        let result = manager\n            .try_recover_async(async {\n                Err(Error::Io(io::Error::new(io::ErrorKind::Other, \"test error\")))\n            })\n            .await;\n\n        assert!(result.is_err());\n\n        Ok(())\n    }\n}"
+                }
+              ]
+            }
+          }
+        },
+        "module_integration": {
+          "pattern": {
+            "imports": "use crate::err::{Error, Result, ErrorExt};",
+            "error_conversion": "impl From<${module_name}Error> for Error {\n    fn from(err: ${module_name}Error) -> Self {\n        Self::Internal(InternalError::OperationFailed(err.to_string()))\n    }\n}",
+            "result_type": "Result<${success_type}>",
+            "error_propagation": {
+              "context": ".context(\"${operation} failed\")?",
+              "map_err": ".map_err(|e| Error::Internal(InternalError::OperationFailed(format!(\"${message}: {}\", e))))?",
+              "ensure": "ensure!(${condition}, Error::Internal(InternalError::ValidationFailed(\"${message}\".into())))"
+            }
+          },
+          "implementation_rules": {
+            "prefer_result_type": true,
+            "use_error_context": true,
+            "propagate_with_context": true,
+            "validate_inputs": true,
+            "handle_all_errors": true
+          }
+        }
+      },
+      "cargo_toml_integration": {
+        "update_triggers": {
+          "on_code_generation": {
+            "check_dependencies": true,
+            "validate_features": true,
+            "update_versions": true
+          },
+          "on_debugging": {
+            "verify_dependencies": true,
+            "check_compatibility": true
+          },
+          "on_refactoring": {
+            "validate_changes": true,
+            "update_requirements": true
+          }
+        },
+        "validation_steps": [
+          {
+            "name": "pre_validation",
+            "actions": [
+              "Check crates.io for latest versions",
+              "Verify compatibility with existing dependencies",
+              "Validate feature flag combinations"
+            ]
+          },
+          {
+            "name": "documentation_check",
+            "actions": [
+              "Verify against docs.rs documentation",
+              "Check for breaking changes",
+              "Validate API usage examples"
+            ]
+          },
+          {
+            "name": "post_validation",
+            "actions": [
+              "Update Cargo.toml if needed",
+              "Regenerate Cargo.lock",
+              "Run cargo check"
+            ]
+          }
+        ]
+      },
+      "servers": [
+        {
+          "url": "https://crates.io/",
+          "description": "Primary crates registry"
+        },
+        {
+          "url": "https://docs.rs/",
+          "description": "Official documentation source",
+          "priority": "highest"
+        }
+      ],
+      "ai_directives": {
+        "code_generation": {
+          "patterns": {
+            "error_handling": {
+              "prefer": [
+                "anyhow",
+                "thiserror"
+              ],
+              "templates": {
+                "result_type": "Result<${success_type}, ${error_type}>",
+                "custom_error": "#[derive(Debug, thiserror::Error)]\npub enum ${name}Error {\n    #[error(\"${message}\")]\n    ${variant},\n}",
+                "error_conversion": "impl From<${from}> for ${to} {\n    fn from(error: ${from}) -> Self {\n        Self::${variant}(error)\n    }\n}",
+                "context_wrapping": "with_context(|| format!(\"${message}\"${args}))?",
+                "result_logging": "tracing::error!(error = ?err, \"${message}\")",
+                "fallible_function": "fn ${name}(${params}) -> Result<${success_type}, ${error_type}> {\n    ${body}\n}",
+                "error_chain": ".map_err(|e| ${error_type}::${variant}(e))?"
+              }
+            },
+            "type_patterns": {
+              "prefer": [
+                "derive_more",
+                "smart-default"
+              ],
+              "templates": {
+                "newtype": "#[derive(Debug, Clone, PartialEq)]\npub struct ${name}(pub ${inner_type});",
+                "builder": "#[derive(Debug, Default)]\npub struct ${name}Builder {\n    ${fields}\n}\n\nimpl ${name}Builder {\n    pub fn new() -> Self {\n        Self::default()\n    }\n\n    pub fn build(self) -> Result<${name}, ${error_type}> {\n        ${validation}\n        Ok(${name} {\n            ${construction}\n        })\n    }\n}",
+                "type_state": "pub struct ${name}<State> {\n    inner: ${inner_type},\n    state: std::marker::PhantomData<State>,\n}",
+                "visitor": "pub trait ${name}Visitor {\n    type Output;\n\n    fn visit_${variant}(&mut self, value: ${type}) -> Self::Output;\n}"
+              }
+            },
+            "async_patterns": {
+              "prefer": [
+                "tokio",
+                "async-std"
+              ],
+              "templates": {
+                "async_fn": "async fn ${name}(${params}) -> ${return_type}",
+                "spawn": "tokio::spawn(async move { ${body} })",
+                "select": "tokio::select! {\n    ${branches}\n}",
+                "timeout": "tokio::time::timeout(Duration::from_secs(${seconds}), ${future})",
+                "stream_processor": "async fn process_stream<S>(mut stream: S) -> Result<(), Error>\nwhere\n    S: Stream<Item = Result<${item_type}, Error>> + Unpin,\n{\n    while let Some(item) = stream.next().await {\n        let item = item?;\n        ${processing}\n    }\n    Ok(())\n}",
+                "backoff": "backoff::future::retry(backoff::ExponentialBackoff::default(), || async {\n    ${operation}\n}).await?"
+              }
+            },
+            "testing": {
+              "templates": {
+                "unit_test": "#[test]\nfn test_${name}() -> Result<()> {\n    ${body}\n}",
+                "async_test": "#[tokio::test]\nasync fn test_${name}() -> Result<()> {\n    ${body}\n}",
+                "mock_struct": "#[cfg_attr(test, mockall::automock)]\npub trait ${name} {\n    fn ${method}(&self) -> Result<()>;\n}",
+                "mock_trait": "#[cfg_attr(test, mockall::automock)]\npub trait ${trait_name} {\n    fn ${method}(&self) -> Result<${return_type}>;\n}",
+                "integration_test": "#[cfg(test)]\nmod integration_tests {\n    use super::*;\n\n    #[tokio::test]\n    async fn test_${name}() -> Result<()> {\n        ${body}\n        Ok(())\n    }\n}",
+                "benchmark": "#[bench]\nfn bench_${name}(b: &mut Bencher) {\n    b.iter(|| {\n        ${body}\n    });\n}",
+                "proptest": "proptest! {\n    #[test]\n    fn test_${name}(${inputs}: ${types}) {\n        ${property_check}\n    }\n}",
+                "test_fixture": "fn setup_${name}() -> ${type} {\n    ${setup}\n}"
+              }
+            },
+            "telemetry": {
+              "templates": {
+                "span": "let _span = tracing::info_span!(\"${name}\", ${fields}).entered();",
+                "event": "tracing::info!(${fields}, \"${message}\");",
+                "metrics_counter": "metrics::counter!(\"${metric_name}\", ${value});",
+                "metrics_gauge": "metrics::gauge!(\"${metric_name}\", ${value});",
+                "metrics_histogram": "metrics::histogram!(\"${metric_name}\", ${value});",
+                "instrumented_fn": "#[tracing::instrument(level = \"${level}\", skip(${skip_params}))]\nfn ${name}(${params}) -> Result<${return_type}> {\n    ${body}\n}"
+              }
+            }
+          },
+          "idioms": {
+            "prefer_const": true,
+            "use_builder_pattern": true,
+            "derive_debug": true,
+            "impl_from": true,
+            "newtype_pattern": true,
+            "type_state_pattern": true,
+            "prefer_smart_pointers": true,
+            "avoid_unnecessary_clones": true,
+            "use_trait_objects": true
+          }
+        },
+        "refactoring": {
+          "suggestions": {
+            "clone_reduction": true,
+            "lifetime_elision": true,
+            "iterator_usage": true,
+            "smart_pointers": true,
+            "async_patterns": true,
+            "error_handling": true,
+            "modularization": true,
+            "code_cleanup": true
+          },
+          "patterns": {
+            "match_to_if_let": true,
+            "vec_to_array": true,
+            "string_to_static_str": true,
+            "mutex_to_rwlock": true,
+            "channel_patterns": true,
+            "builder_pattern": true,
+            "convert_if_chain": true,
+            "use_let_else": true
+          }
+        },
+        "documentation": {
+          "templates": {
+            "function": "/// ${description}\n///\n/// # Arguments\n///\n/// * `${param}` - ${param_desc}\n///\n/// # Returns\n///\n/// * `Result<${type}>` - ${returns}\n///\n/// # Errors\n///\n/// * `Error::${variant}` - ${error_desc}\n///\n/// # Example\n///\n/// ```rust\n/// ${example}\n/// ```",
+            "struct": "/// ${description}\n///\n/// # Fields\n///\n/// * `${field}` - ${field_desc}\n",
+            "module": "//! ${description}\n//!\n//! # Examples\n//!\n//! ```rust\n//! ${example}\n//! ```",
+            "trait": "/// ${description}\n///\n/// # Methods\n///\n/// * `${method}` - ${method_desc}\n",
+            "enum": "/// ${description}\n///\n/// # Variants\n///\n/// * `${variant}` - ${variant_desc}\n"
+          },
+          "best_practices": {
+            "always_document_public_items": true,
+            "use_clear_and_concise_language": true,
+            "provide_examples_for_complex_functions": true,
+            "document_possible_errors": true,
+            "maintain_consistency_in_documentation_style": true
+          }
+        }
+      },
+      "paths": {
+        "/api/v1/crates": {
+          "get": {
+            "description": "Search for crates on crates.io",
+            "operationId": "SearchCratesOnCratesIo",
+            "parameters": [
+              {
+                "name": "page",
+                "in": "query",
+                "description": "Page number (starts from 1)",
+                "required": true,
+                "schema": {
+                  "type": "number"
+                }
+              },
+              {
+                "name": "per_page",
+                "in": "query",
+                "description": "Page size",
+                "required": true,
+                "schema": {
+                  "type": "number"
+                }
+              },
+              {
+                "name": "q",
+                "in": "query",
+                "description": "Search query for crates",
+                "required": false,
+                "schema": {
+                  "type": "string"
+                }
+              },
+              {
+                "name": "sort",
+                "in": "query",
+                "description": "Sort criteria",
+                "required": false,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "relevance",
+                    "downloads",
+                    "recent-downloads",
+                    "recent-updates",
+                    "new"
+                  ],
+                  "default": "relevance"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "components": {
+        "schemas": {
+          "CrateResponse": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "documentation": {
+                "type": "string"
+              },
+              "repository": {
+                "type": "string"
+              },
+              "downloads": {
+                "type": "number"
+              },
+              "recent_downloads": {
+                "type": "number"
+              },
+              "categories": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "keywords": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "platform_specific": {
+        "windows": {
+          "dependencies": {
+            "windows-sys": {
+              "version": "0.59.0",
+              "features": [
+                "Win32_Foundation",
+                "Win32_Security",
+                "Win32_System_Threading",
+                "Win32_UI_WindowsAndMessaging",
+                "Win32_System_Memory",
+                "Win32_System_Diagnostics_Debug",
+                "Win32_System_SystemServices",
+                "Win32_System_WindowsProgramming"
+              ]
+            }
+          },
+          "patterns": {
+            "imports": "use windows_sys::{Win32::Foundation::*, Win32::System::Threading::*, Win32::UI::WindowsAndMessaging::*};",
+            "error_handling": {
+              "win32_error": "#[derive(Debug, thiserror::Error)]\npub enum Win32Error {\n    #[error(\"Win32 API error: {0}\")]\n    ApiError(#[from] windows_sys::Error),\n    #[error(\"Operation failed with code: {0}\")]\n    ErrorCode(u32),\n}",
+              "error_check": "if result == 0 {\n    return Err(Win32Error::ErrorCode(unsafe { GetLastError() }));\n}",
+              "handle_check": "if handle == INVALID_HANDLE_VALUE {\n    return Err(Win32Error::ErrorCode(GetLastError()));\n}"
+            },
+            "system_calls": {
+              "create_event": "unsafe {\n    let event = CreateEventW(\n        std::ptr::null_mut(),\n        true.into(),\n        false.into(),\n        std::ptr::null(),\n    );\n    if event == 0 {\n        return Err(Win32Error::ErrorCode(GetLastError()));\n    }\n    Ok(event)\n}",
+              "message_box": "unsafe {\n    MessageBoxW(\n        0,\n        wide_string.as_ptr(),\n        title.as_ptr(),\n        MB_OK,\n    );\n}"
+            }
+          }
+        },
+        "linux": {
+          "dependencies": {
+            "linux-raw-sys": {
+              "version": "0.6.5",
+              "features": [
+                "general",
+                "errno",
+                "ioctl",
+                "prctl",
+                "system"
+              ]
+            },
+            "libc": {
+              "version": "0.2",
+              "features": [
+                "extra_traits"
+              ]
+            }
+          },
+          "patterns": {
+            "imports": "use linux_raw_sys::{general::*, errno::*, ioctl::*};",
+            "error_handling": {
+              "errno_error": "#[derive(Debug, thiserror::Error)]\npub enum LinuxError {\n    #[error(\"System error: {0}\")]\n    Errno(#[from] nix::errno::Errno),\n    #[error(\"IO error: {0}\")]\n    Io(#[from] std::io::Error),\n}",
+              "error_check": "if result < 0 {\n    return Err(LinuxError::Errno(nix::errno::Errno::last()));\n}"
+            },
+            "system_calls": {
+              "ioctl": "unsafe {\n    let result = libc::ioctl(fd, request, data as *mut _);\n    if result < 0 {\n        return Err(LinuxError::Errno(nix::errno::Errno::last()));\n    }\n    Ok(result)\n}",
+              "prctl": "unsafe {\n    let result = libc::prctl(option, arg2, arg3, arg4, arg5);\n    if result < 0 {\n        return Err(LinuxError::Errno(nix::errno::Errno::last()));\n    }\n    Ok(result)\n}"
+            }
+          }
+        }
+      },
+      "module_templates": {
+        "platform_specific_module": {
+          "windows": "cfg_if::cfg_if! {\n    if #[cfg(target_os = \"windows\")] {\n        mod windows;\n        pub use self::windows::*;\n    } else {\n        compile_error!(\"This module is only available on Windows\");\n    }\n}",
+          "linux": "cfg_if::cfg_if! {\n    if #[cfg(target_os = \"linux\")] {\n        mod linux;\n        pub use self::linux::*;\n    } else {\n        compile_error!(\"This module is only available on Linux\");\n    }\n}",
+          "cross_platform": "cfg_if::cfg_if! {\n    if #[cfg(target_os = \"windows\")] {\n        mod windows;\n        pub use self::windows::*;\n    } else if #[cfg(target_os = \"linux\")] {\n        mod linux;\n        pub use self::linux::*;\n    } else {\n        mod fallback;\n        pub use self::fallback::*;\n    }\n}"
+        }
+      }
+    }
+  }
+}

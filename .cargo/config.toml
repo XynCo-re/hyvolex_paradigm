@@ -1,0 +1,11 @@
+[build]
+target = "x86_64-pc-windows-msvc"
+jobs = 16
+rustc = "C:\\Program Files\\Rust stable MSVC 1.82\\bin\\rustc.exe"
+rustdoc = "C:\\Program Files\\Rust stable MSVC 1.82\\bin\\rustdoc.exe"
+
+[env]
+RUSTFLAGS = "-C target-feature=+crt-static"
+CARGO_REGISTRIES_CRATES_IO_PROTOCOL = "sparse"
+CARGO_NET_GIT_FETCH_WITH_CLI = "true"
+RUST_BACKTRACE = "1"
